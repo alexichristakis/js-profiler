@@ -1,0 +1,23 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.table {
+  width: 300px;
+  height: fit-content;
+  border-radius: 6px;
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 1px solid black;
+
+  tr {
+    border-radius: 6px;
+  }
+
+  td {
+    border-bottom: 1px solid black;
+    border-radius: 4px;
+  }
+}

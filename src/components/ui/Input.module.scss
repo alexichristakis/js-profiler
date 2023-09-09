@@ -1,0 +1,7 @@
+@import "../shared.scss";
+
+.main {
+  @include inputReset();
+  padding: 0;
+  line-height: 16px;; 
+}

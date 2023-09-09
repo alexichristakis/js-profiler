@@ -1,0 +1,26 @@
+.main {
+  display: flex;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.16);
+}
+
+.sidebar {
+  width: 300px;
+  padding: 4px 8px;
+  background-color: rgba(0, 0, 0, 0.04);
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.body {
+  flex: 1 1 auto;
+  padding: 8px;
+}

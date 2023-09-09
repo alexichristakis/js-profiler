@@ -1,0 +1,23 @@
+$fill: rgb(36, 228, 45);
+$strokeWidth: var(--strokeWidth, 4px);
+$track: rgba(0, 0, 0, 0.1);
+
+.main {
+  display: block;
+}
+
+.track {
+  fill: transparent;
+  stroke: $track;
+  stroke-width: $strokeWidth;
+}
+
+.fill {
+  fill: transparent;
+  stroke: $fill;
+  stroke-width: $strokeWidth;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.2s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}

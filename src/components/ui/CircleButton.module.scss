@@ -1,0 +1,26 @@
+@import "../shared.scss";
+
+.main {
+  @include buttonReset();
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 14px;
+  z-index: 0;
+  border-radius: 50%;
+  height: fit-content;
+  width: fit-content;
+  padding: 2px;
+
+  &:hover {
+    .inner {
+      opacity: 1;
+    }
+  }
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  opacity: 0;
+  color: rgba(0, 0, 0, 0.5);
+}
