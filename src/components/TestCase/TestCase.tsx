@@ -37,6 +37,7 @@ const TestCase: FC<TestCaseProps> = ({ id, code }) => {
       <div className={styles.body}>
         <CodeMirror
           key={id}
+          id={id}
           value={code}
           onChange={(code) =>
             dispatch({ type: "EDIT_CASE", testCase: { id, code } })

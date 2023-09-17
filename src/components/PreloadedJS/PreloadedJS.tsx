@@ -11,6 +11,7 @@ const PreloadedJS: FC = () => {
   return (
     <div className={styles.main}>
       <CodeMirror
+        id="preloadedJS"
         value={value}
         onChange={(preloadedJS) =>
           dispatch({ type: "EDIT_PRELOADED_JS", preloadedJS })

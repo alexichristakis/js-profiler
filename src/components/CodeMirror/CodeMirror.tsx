@@ -24,9 +24,11 @@ import { useMergedRef } from "hooks/useMergedRef";
 import useMountEffect from "hooks/useMountEffect";
 import { ForwardRefRenderFunction, forwardRef, useRef } from "react";
 import styles from "./CodeMirror.module.scss";
+import useLanguageServer from "languageServer/useLanguageServer";
+import hoverTooltipExtension from "./hoverTooltipExtension";
 
 type CodeMirrorProps = {
-  id?: string;
+  id: string;
   value?: string;
   onChange?: (value: string) => void;
 };
@@ -36,10 +38,12 @@ const CodeMirror: ForwardRefRenderFunction<HTMLDivElement, CodeMirrorProps> = (
   outerRef
 ) => {
   const ref = useRef<HTMLDivElement>(null);
+  const languageServerManager = useLanguageServer();
 
   const handleChange = useCallbackRef(({ docChanged, state }: ViewUpdate) => {
     if (docChanged) {
       const value = state.doc.toString();
+      languageServerManager.updateFile(id, value);
       onChange?.(value);
     }
   });
@@ -57,9 +61,16 @@ const CodeMirror: ForwardRefRenderFunction<HTMLDivElement, CodeMirrorProps> = (
       EditorState.allowMultipleSelections.of(true),
       javascript({ typescript: true }),
       closeBrackets(),
-      autocompletion({}),
+      autocompletion({
+        override: [
+          async (context) => {
+            return null;
+          },
+        ],
+      }),
       syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
       bracketMatching(),
+      hoverTooltipExtension({ languageServerManager, id }),
       keymap.of([
         ...closeBracketsKeymap,
         ...defaultKeymap,
