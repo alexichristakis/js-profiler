@@ -1,11 +1,16 @@
 import { FC, PropsWithChildren, useMemo, useReducer } from "react";
-import Context, { State } from "./context";
+import Context, { State, GetStateContext } from "./context";
 import reducer from "./reducer";
+import useCallbackRef from "hooks/useCallbackRef";
 
 const initialState: State = {
   runningCases: new Set(),
-  preloadedJS: "",
+  preloadedJS: "const hello = 'world'",
   testCases: [
+    {
+      code: "console.log(hello)",
+      id: "log",
+    },
     {
       code: `let sum = 0
 for (let i = 0; i < 1000000; i++) {
@@ -34,7 +39,9 @@ const Provider: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <Context.Provider value={useMemo(() => ({ state, dispatch }), [state])}>
-      {children}
+      <GetStateContext.Provider value={useCallbackRef(() => state)}>
+        {children}
+      </GetStateContext.Provider>
     </Context.Provider>
   );
 };

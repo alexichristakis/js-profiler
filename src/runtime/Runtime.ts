@@ -1,12 +1,14 @@
 import { TestCase } from "context/types";
 import Runner from "./Runner";
-import { OnReceiveTimes } from "./types";
+import { OnReceiveTimes, OnReceiveError, RuntimeError } from "./types";
 
 type Args = {
   onReceiveTimes: OnReceiveTimes;
+  onReceiveError: OnReceiveError;
 };
 
 type RunArgs = {
+  preloadedJS: string;
   testCases: TestCase[];
   abortSignal: AbortSignal;
   /** How long to run the suite for in ms */
@@ -16,12 +18,14 @@ type RunArgs = {
 class Runtime {
   abortSignal: AbortSignal | null = null;
   reportTimes: OnReceiveTimes;
+  reportError: OnReceiveError;
 
-  constructor({ onReceiveTimes }: Args) {
+  constructor({ onReceiveTimes, onReceiveError }: Args) {
     this.reportTimes = onReceiveTimes;
+    this.reportError = onReceiveError;
   }
 
-  run = async ({ testCases, time, abortSignal }: RunArgs) => {
+  run = async ({ preloadedJS, testCases, time, abortSignal }: RunArgs) => {
     const promises: Promise<unknown>[] = [];
     for (const { id, code } of testCases) {
       const runner = new Runner(
@@ -29,8 +33,17 @@ class Runtime {
         abortSignal
       );
 
-      runner.init(code);
-      promises.push(runner.run(time));
+      runner.init(preloadedJS, code);
+
+      promises.push(
+        Promise.resolve().then(async () => {
+          try {
+            await runner.run(time);
+          } catch (error) {
+            this.reportError(id, error as RuntimeError);
+          }
+        })
+      );
     }
 
     return await Promise.allSettled(promises);

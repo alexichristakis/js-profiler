@@ -14,4 +14,6 @@ const Context = createContext<{
   state: State;
 } | null>(null);
 
+export const GetStateContext = createContext<(() => State) | null>(null);
+
 export default Context;

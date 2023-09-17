@@ -6,6 +6,7 @@ class Runner {
   private abortSignal: AbortSignal;
   private worker: Worker | null = null;
   private code = "";
+  private preloadedJS = "";
   private heartbeatTimeout: number | null = null;
   private reportTimes: ReportTimes;
   private messageIds: Set<string> = new Set();
@@ -20,9 +21,10 @@ class Runner {
     this.abortSignal = abortSignal;
   }
 
-  init = (code: string) => {
+  init = (preloadedJS: string, code: string) => {
     this.abort();
 
+    this.preloadedJS = preloadedJS;
     this.code = code;
     this.worker = new Worker();
     this.worker.onmessage = this.onMessage;
@@ -41,10 +43,10 @@ class Runner {
     const maxIterations = this.iterations ?? 0;
     const progress = (maxIterations - this.messageIds.size) / maxIterations;
 
-    if (response && "err" in response) {
+    if (response && "error" in response) {
       this.abort();
-      const { err } = response;
-      this.promise?.reject(err);
+      const { error } = response;
+      this.promise?.reject(error);
       return;
     } else if (response && "times" in response) {
       const { times } = response;
@@ -92,7 +94,11 @@ class Runner {
         this.postMessage({
           id,
           method: "run",
-          args: { code: this.code, time: stepTime },
+          args: {
+            preloadedJS: this.preloadedJS,
+            code: this.code,
+            time: stepTime,
+          },
         });
       }
     });

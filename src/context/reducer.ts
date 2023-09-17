@@ -24,6 +24,13 @@ const reducer = (state: State, action: Action): State => {
       });
     }
 
+    case "EDIT_PRELOADED_JS": {
+      const { preloadedJS } = action;
+      return produce(state, (draft) => {
+        draft.preloadedJS = preloadedJS;
+      });
+    }
+
     case "ADD_CASE": {
       return produce(state, (draft) => {
         draft.testCases.push({ id: v4(), code: "// Your code goes here" });
@@ -73,19 +80,12 @@ const reducer = (state: State, action: Action): State => {
             progress,
             averageTime: 0,
             iterations: times.length,
-            maxTime: 0,
-            minTime: 0,
           });
 
           return draft;
         }
 
-        const {
-          averageTime,
-          iterations: oldIterations,
-          minTime,
-          maxTime,
-        } = result;
+        const { averageTime, iterations: oldIterations } = result;
 
         const newIterations = oldIterations + times.length;
 
@@ -96,8 +96,6 @@ const reducer = (state: State, action: Action): State => {
         result.progress = progress;
         result.averageTime = newAverageTime;
         result.iterations = newIterations;
-        result.minTime = Math.min(minTime, ...times);
-        result.maxTime = Math.max(maxTime, ...times);
       });
     }
 

@@ -1,5 +1,5 @@
 import useDispatch from "context/useDispatch";
-import useSelector from "context/useSelector";
+import useGetState from "context/useGetState";
 import useCallbackRef from "hooks/useCallbackRef";
 import { useRef } from "react";
 import Runtime from "runtime/Runtime";
@@ -7,15 +7,21 @@ import { v4 } from "uuid";
 
 const useRuntime = () => {
   const dispatch = useDispatch();
-  const testCases = useSelector(({ testCases }) => testCases);
+  const getState = useGetState();
   const abortControllers = useRef<Map<string, AbortController>>(new Map());
 
   const run = useCallbackRef(async (id?: string) => {
+    const { testCases, preloadedJS } = getState();
+
     const runId = v4();
 
     const runtime = new Runtime({
       onReceiveTimes: (id, times, progress) => {
+        console.log(id, times, progress);
         dispatch({ type: "RECEIVE_RESULTS", id, times, progress });
+      },
+      onReceiveError: (id, error) => {
+        console.log({ id, error });
       },
     });
 
@@ -34,6 +40,7 @@ const useRuntime = () => {
     // run for 10 seconds
     await runtime.run({
       time: 10 * 1000,
+      preloadedJS,
       testCases: testCasesToRun,
       abortSignal,
     });

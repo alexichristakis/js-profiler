@@ -1,5 +1,6 @@
 import RpcRegistry from "rpc/registry";
 import { HostMethods, HostRPCMethodConfigs } from "./types";
+import { v4 } from "uuid";
 
 declare const self: DedicatedWorkerGlobalScope;
 export default {} as typeof Worker & { new (): Worker };
@@ -10,38 +11,53 @@ export type Payload = {
   args: HostMethods["arguments"];
 };
 
-let aborted = false;
+const makeRandomVariableName = () => `$${v4()}`.replaceAll("-", "");
 
 const rpcRegistry = new RpcRegistry<HostRPCMethodConfigs>({
-  abort: () => {
-    aborted = true;
-  },
-  run: async ({ code, time }) => {
-    aborted = false;
+  abort: () => {},
+  run: async ({ preloadedJS, code, time }) => {
+    const accumulatedRunTimeVariableName = makeRandomVariableName();
+    const timesVariableName = makeRandomVariableName();
+    const timeVariableName = makeRandomVariableName();
+    const iterationStartTimeVariableName = makeRandomVariableName();
 
-    // const getPreloadedScope = new Function(preloadedJS);
+    // eslint-disable-next-line no-new-func
+    const run = new Function(
+      timeVariableName,
+      `
+      return (async () => {
+          try {
+            ${preloadedJS}
+            const ${timesVariableName} = []
+            let ${accumulatedRunTimeVariableName} = 0;
+            while (${accumulatedRunTimeVariableName} < ${timeVariableName}) {
+              const ${iterationStartTimeVariableName} = performance.now();
+              try {
+                ${code.trim()}
+              } catch (err) {
+                return { status: 'error', runError: err }
+              } finally {
+                // we're in a separate closure here so iterationTime doesn't need to be hashed
+                const iterationTime = performance.now() - ${iterationStartTimeVariableName};
+                ${timesVariableName}.push(iterationTime);
+                ${accumulatedRunTimeVariableName} += iterationTime;
+              }
+            }
 
-    const times: number[] = [];
+            return { status: 'success', times: ${timesVariableName} }
+          } catch (err) {
+            return { status: 'error', preloadedJSError: err }
+          }
+        })()
+      `
+    );
 
-    // eslint-disable-next-line no-restricted-syntax, no-with
-    const run = new Function(code);
-    let accumulatedRunTime = 0;
+    const startTime = performance.now();
+    const { status, times, runError, preloadedJSError } = await run(time);
+    console.log(performance.now() - startTime);
 
-    while (!aborted && accumulatedRunTime < time) {
-      const iterationStartTime = performance.now();
-
-      try {
-        run();
-      } catch (err) {
-        return { err };
-      } finally {
-        const iterationTime = performance.now() - iterationStartTime;
-        times.push(iterationTime);
-        accumulatedRunTime += iterationTime;
-      }
-
-      // yield the event loop in case the runner has been aborted
-      await Promise.resolve();
+    if (status === "error") {
+      return { error: { runError, preloadedJSError } };
     }
 
     return { times };

@@ -8,11 +8,15 @@ export type OnReceiveTimes = (
   progress: number
 ) => void;
 
+export type RuntimeError = { preloadedJSError: unknown; runError: unknown };
+
+export type OnReceiveError = (id: string, error: RuntimeError) => void;
+
 export type HostMethods =
   | {
       method: "run";
-      arguments: { code: string; time: number };
-      response: { times: number[] } | { err: unknown };
+      arguments: { preloadedJS: string; code: string; time: number };
+      response: { times: number[] } | { error: RuntimeError };
     }
   | {
       method: "abort";

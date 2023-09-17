@@ -7,8 +7,6 @@ export type TestResult = {
   progress: number;
   iterations: number;
   averageTime: number;
-  minTime: number;
-  maxTime: number;
 };
 
 export type AddTestCaseAction = {
@@ -18,6 +16,11 @@ export type AddTestCaseAction = {
 export type EditTestCaseAction = {
   type: "EDIT_CASE";
   testCase: TestCase;
+};
+
+export type EditPreloadedJSAction = {
+  type: "EDIT_PRELOADED_JS";
+  preloadedJS: string;
 };
 
 export type DeleteTestCaseAction = {
@@ -47,6 +50,7 @@ export type Action =
   | DeleteTestCaseAction
   | ToggleRunningAction
   | ReceiveResultsAction
-  | StopAllAction;
+  | StopAllAction
+  | EditPreloadedJSAction;
 
 export type SelectedToolDispatch = Dispatch<AddTestCaseAction>;
