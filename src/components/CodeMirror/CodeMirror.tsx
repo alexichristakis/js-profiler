@@ -1,22 +1,29 @@
-import { closeBrackets, closeBracketsKeymap } from "@codemirror/closebrackets";
+import {
+  autocompletion,
+  closeBrackets,
+  closeBracketsKeymap,
+  completionKeymap,
+} from "@codemirror/autocomplete";
 import { defaultKeymap } from "@codemirror/commands";
-import { commentKeymap } from "@codemirror/comment";
-import { lineNumbers } from "@codemirror/gutter";
 import { javascript } from "@codemirror/lang-javascript";
-import { bracketMatching } from "@codemirror/matchbrackets";
-import { EditorState, Extension } from "@codemirror/state";
-import { defaultHighlightStyle } from "@codemirror/highlight";
+import {
+  bracketMatching,
+  defaultHighlightStyle,
+  foldKeymap,
+  syntaxHighlighting,
+} from "@codemirror/language";
+import { EditorState } from "@codemirror/state";
 import {
   EditorView,
-  highlightSpecialChars,
-  KeyBinding,
-  keymap,
   ViewUpdate,
+  highlightSpecialChars,
+  keymap,
 } from "@codemirror/view";
-import { forwardRef, ForwardRefRenderFunction, useEffect, useRef } from "react";
-import styles from "./CodeMirror.module.scss";
-import { useMergedRef } from "hooks/useMergedRef";
 import useCallbackRef from "hooks/useCallbackRef";
+import { useMergedRef } from "hooks/useMergedRef";
+import useMountEffect from "hooks/useMountEffect";
+import { ForwardRefRenderFunction, forwardRef, useRef } from "react";
+import styles from "./CodeMirror.module.scss";
 
 type CodeMirrorProps = {
   id?: string;
@@ -37,7 +44,7 @@ const CodeMirror: ForwardRefRenderFunction<HTMLDivElement, CodeMirrorProps> = (
     }
   });
 
-  useEffect(() => {
+  useMountEffect(() => {
     const parent = ref.current;
     if (parent == null) {
       return;
@@ -49,12 +56,16 @@ const CodeMirror: ForwardRefRenderFunction<HTMLDivElement, CodeMirrorProps> = (
       highlightSpecialChars(),
       EditorState.allowMultipleSelections.of(true),
       javascript({ typescript: true }),
-      // defaultHighlightStyle.extension,
+      closeBrackets(),
+      autocompletion({}),
+      syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+      bracketMatching(),
       keymap.of([
         ...closeBracketsKeymap,
         ...defaultKeymap,
-        ...commentKeymap,
-      ] as unknown as ReadonlyArray<KeyBinding>),
+        ...foldKeymap,
+        ...completionKeymap,
+      ]),
     ];
 
     const state = EditorState.create({
@@ -62,12 +73,15 @@ const CodeMirror: ForwardRefRenderFunction<HTMLDivElement, CodeMirrorProps> = (
       extensions,
     });
 
-    const view = new EditorView({ state, parent });
+    const view = new EditorView({
+      state,
+      parent,
+    });
 
     return () => {
       view.destroy();
     };
-  }, []);
+  });
 
   return (
     <div id={id} className={styles.main} ref={useMergedRef(ref, outerRef)} />
