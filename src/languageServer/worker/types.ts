@@ -22,6 +22,18 @@ export type UpdateFileArgs = { fileId: string; file: string };
 
 export type InfoArgs = { fileId: string; pos: number };
 
+export type AutocompleteArgs = {
+  fileId: string;
+  pos: number;
+  explicit: boolean;
+  charBefore?: string;
+};
+
+export type AutocompleteEntries = ({
+  sourceDisplayString: string;
+  details?: CompletionEntryDetails;
+} & CompletionEntry)[];
+
 export type HostMethods =
   | {
       method: "updateFile";
@@ -45,12 +57,9 @@ export type HostMethods =
     }
   | {
       method: "autocomplete";
-      arguments: { fileId: string; pos: number };
-      response: {
-        entries: ({
-          sourceDisplayString: string;
-          details: CompletionEntryDetails;
-        } & CompletionEntry)[];
+      arguments: AutocompleteArgs;
+      response: null | {
+        entries: AutocompleteEntries;
       };
     }
   | {

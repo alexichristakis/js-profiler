@@ -1,6 +1,10 @@
 import { v4 } from "uuid";
 import Worker, { Payload } from "./worker/languageServer.worker";
-import { HostMethods, HostRPCMethodConfigs } from "./worker/types";
+import {
+  AutocompleteArgs,
+  HostMethods,
+  HostRPCMethodConfigs,
+} from "./worker/types";
 
 class LanguageServerManager {
   private worker: Worker | null = null;
@@ -48,8 +52,8 @@ class LanguageServerManager {
     //
   };
 
-  getAutocompleteResults = async () => {
-    //
+  getAutocompleteResults = async (args: AutocompleteArgs) => {
+    return this.postMessage("autocomplete", args);
   };
 
   getQuickInfo = async (fileId: string, pos: number) => {

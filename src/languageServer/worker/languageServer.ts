@@ -1,9 +1,46 @@
 import RpcRegistry from "rpc/registry";
-import { HostRPCMethodConfigs, InfoArgs, UpdateFileArgs } from "./types";
+import {
+  AutocompleteArgs,
+  AutocompleteEntries,
+  HostRPCMethodConfigs,
+  InfoArgs,
+  UpdateFileArgs,
+} from "./types";
 import { VirtualTypeScriptEnvironment } from "@typescript/vfs";
 import setupEnv from "./setupEnv";
 import { assertIsNotNullish } from "typeguards";
-import { displayPartsToString } from "typescript";
+import ts, {
+  FormatCodeSettings,
+  displayPartsToString,
+  CompletionsTriggerCharacter,
+  CompletionTriggerKind,
+} from "typescript";
+
+const triggerCharacters = new Set<string | undefined>([
+  ".",
+  '"',
+  "'",
+  "`",
+  "/",
+  "@",
+  "<",
+  "#",
+  " ",
+]);
+
+const formatCodeSettings: FormatCodeSettings = {
+  semicolons: ts.SemicolonPreference.Insert,
+  trimTrailingWhitespace: true,
+  indentSize: 2,
+  tabSize: 2,
+  convertTabsToSpaces: true,
+  indentStyle: ts.IndentStyle.Smart,
+  insertSpaceAfterCommaDelimiter: true,
+  insertSpaceAfterKeywordsInControlFlowStatements: true,
+  insertSpaceAfterSemicolonInForStatements: true,
+  insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
+  insertSpaceBeforeAndAfterBinaryOperators: true,
+};
 
 class LanguageServer {
   rpc: RpcRegistry<HostRPCMethodConfigs>;
@@ -13,8 +50,7 @@ class LanguageServer {
     this.rpc = new RpcRegistry<HostRPCMethodConfigs>({
       updateFile: this.updateFile,
       info: this.info,
-      // @ts-expect-error
-      autocomplete: () => {},
+      autocomplete: this.autocomplete,
       // @ts-expect-error
       lint: () => {},
       formatFile: () => {},
@@ -69,7 +105,59 @@ class LanguageServer {
     };
   };
 
-  autocomplete = () => {};
+  autocomplete = ({
+    fileId,
+    explicit,
+    charBefore,
+    pos,
+  }: AutocompleteArgs): { entries: AutocompleteEntries } | null => {
+    assertIsNotNullish(this.env, "env not ready");
+
+    const { languageService } = this.env;
+    const fileName = this.getFileName(fileId);
+    const completions = languageService.getCompletionsAtPosition(
+      fileName,
+      pos,
+      {
+        includeCompletionsForImportStatements: true,
+        includeCompletionsWithInsertText: true,
+        includeCompletionsForModuleExports: true,
+        includeAutomaticOptionalChainCompletions: true,
+        includePackageJsonAutoImports: "auto",
+        triggerKind:
+          explicit || !triggerCharacters.has(charBefore)
+            ? CompletionTriggerKind.Invoked
+            : CompletionTriggerKind.TriggerCharacter,
+        triggerCharacter: triggerCharacters.has(charBefore)
+          ? (charBefore as CompletionsTriggerCharacter)
+          : undefined,
+      }
+    );
+
+    if (!completions) {
+      return null;
+    }
+
+    const { entries } = completions;
+    return {
+      ...completions,
+      entries: entries.map((entry) => ({
+        ...entry,
+        sourceDisplayString: displayPartsToString(entry.sourceDisplay),
+        details:
+          entry.data &&
+          languageService.getCompletionEntryDetails(
+            fileName,
+            pos,
+            entry.name,
+            formatCodeSettings,
+            entry.source,
+            undefined,
+            entry.data
+          ),
+      })),
+    };
+  };
 }
 
 export default LanguageServer;

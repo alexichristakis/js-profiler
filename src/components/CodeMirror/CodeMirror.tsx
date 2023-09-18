@@ -1,10 +1,9 @@
 import {
-  autocompletion,
   closeBrackets,
   closeBracketsKeymap,
   completionKeymap,
 } from "@codemirror/autocomplete";
-import { defaultKeymap } from "@codemirror/commands";
+import { history, historyKeymap, defaultKeymap } from "@codemirror/commands";
 import { javascript } from "@codemirror/lang-javascript";
 import {
   bracketMatching,
@@ -26,6 +25,7 @@ import { ForwardRefRenderFunction, forwardRef, useRef } from "react";
 import styles from "./CodeMirror.module.scss";
 import useLanguageServer from "languageServer/useLanguageServer";
 import hoverTooltipExtension from "./hoverTooltipExtension";
+import autocompleteExtension from "./autocompleteExtension";
 
 type CodeMirrorProps = {
   id: string;
@@ -55,27 +55,23 @@ const CodeMirror: ForwardRefRenderFunction<HTMLDivElement, CodeMirrorProps> = (
     }
 
     const extensions = [
+      history(),
       EditorView.lineWrapping,
       EditorView.updateListener.of(handleChange),
       highlightSpecialChars(),
       EditorState.allowMultipleSelections.of(true),
+      autocompleteExtension({ languageServerManager, id }),
+      hoverTooltipExtension({ languageServerManager, id }),
       javascript({ typescript: true }),
       closeBrackets(),
-      autocompletion({
-        override: [
-          async (context) => {
-            return null;
-          },
-        ],
-      }),
       syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
       bracketMatching(),
-      hoverTooltipExtension({ languageServerManager, id }),
       keymap.of([
         ...closeBracketsKeymap,
         ...defaultKeymap,
         ...foldKeymap,
         ...completionKeymap,
+        ...historyKeymap,
       ]),
     ];
 
