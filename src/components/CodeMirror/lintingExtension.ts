@@ -4,12 +4,12 @@ import LanguageServerManager from "languageServer/LanguageServerManager";
 
 type Args = {
   id: string;
-  languageServerManager: LanguageServerManager;
+  languageServer: LanguageServerManager;
 };
 
-const lintingExtension = ({ id, languageServerManager }: Args): Extension => {
+const lintingExtension = ({ id, languageServer }: Args): Extension => {
   return linter(async () => {
-    const { diagnostics } = await languageServerManager.getLintDiagnostics(id);
+    const { diagnostics } = await languageServer.getLintDiagnostics(id);
     if (!diagnostics) {
       return [];
     }

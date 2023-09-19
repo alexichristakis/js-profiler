@@ -6,6 +6,7 @@ import useCallbackRef from "hooks/useCallbackRef";
 const initialState: State = {
   runningCases: new Set(),
   preloadedJS: "const hello = 'world'",
+  preloadedJSError: null,
   testCases: [
     {
       code: "console.log(hello)",
@@ -32,6 +33,7 @@ Array.from(arr.keys()).forEach(key => {
     },
   ],
   testResults: [],
+  testErrors: [],
 };
 
 const Provider: FC<PropsWithChildren> = ({ children }) => {

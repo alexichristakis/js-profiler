@@ -17,7 +17,7 @@ let messageQueue: MessageEvent<Payload>[] = [];
 const processMessage = async (message: MessageEvent<Payload>) => {
   const { data } = message;
   const { method, args, id } = data;
-  const response = await languageServer.rpc.callMethod(method, args);
+  const response = await languageServer.call(method, args);
   postMessage({ id, response });
 };
 

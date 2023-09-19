@@ -13,7 +13,6 @@ const COMPILER_OPTIONS: CompilerOptions = {
   module: ModuleKind.CommonJS,
   allowJs: true,
   checkJs: true,
-  noEmit: true,
   resolveJsonModule: true,
   strict: true,
   lib: ["es2020", "dom"],

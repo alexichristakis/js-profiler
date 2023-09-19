@@ -1,4 +1,4 @@
-import Provider from "context/Provider";
+import StoreProvider from "context/Provider";
 import { enableMapSet } from "immer";
 import LanguageServerProvider from "languageServer/LanguageServerProvider";
 import RuntimeProvider from "runtime/Provider";
@@ -10,18 +10,18 @@ enableMapSet();
 
 function App() {
   return (
-    <Provider>
-      <RuntimeProvider>
-        <LanguageServerProvider>
+    <StoreProvider>
+      <LanguageServerProvider>
+        <RuntimeProvider>
           <div className={styles.main}>
             <Header />
             <main>
               <Editor />
             </main>
           </div>
-        </LanguageServerProvider>
-      </RuntimeProvider>
-    </Provider>
+        </RuntimeProvider>
+      </LanguageServerProvider>
+    </StoreProvider>
   );
 }
 

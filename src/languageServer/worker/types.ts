@@ -32,7 +32,9 @@ export type FormatFileArgs = { fileId: string };
 
 export type DeleteFileArgs = { fileId: string };
 
-export type GetFileArgs = { fileId: string };
+export type TranspileFileArgs = { fileId: string };
+
+export type GetFileArgs = { filePath: string };
 
 export type AutocompleteArgs = {
   fileId: string;
@@ -51,6 +53,11 @@ export type HostMethods =
       method: "updateFile";
       arguments: UpdateFileArgs;
       response: void;
+    }
+  | {
+      method: "transpileFile";
+      arguments: TranspileFileArgs;
+      response: string;
     }
   | {
       method: "deleteFile";

@@ -45,8 +45,12 @@ class LanguageServerManager {
     this.messages.get(id)?.resolve(response);
   };
 
-  getFile = (fileId: string) => {
-    return this.postMessage("getFile", { fileId });
+  getFile = (filePath: string) => {
+    return this.postMessage("getFile", { filePath });
+  };
+
+  getTranspiledFile = (fileId: string) => {
+    return this.postMessage("transpileFile", { fileId });
   };
 
   getFileList = () => {

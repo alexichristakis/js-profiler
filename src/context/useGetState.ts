@@ -1,6 +1,6 @@
 import { useContext } from "use-context-selector";
 import { GetStateContext } from "./context";
-import { assertIsNotNullish } from "typeguards";
+import { assertIsNotNullish } from "utils/typeguards";
 
 const useGetState = () => {
   const context = useContext(GetStateContext);

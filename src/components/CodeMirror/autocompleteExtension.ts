@@ -8,10 +8,10 @@ import throttleAsync from "./throttleAsync";
 
 type Args = {
   id: string;
-  languageServerManager: LanguageServerManager;
+  languageServer: LanguageServerManager;
 };
 
-const autocompleteExtension = ({ id, languageServerManager }: Args) => {
+const autocompleteExtension = ({ id, languageServer }: Args) => {
   return autocompletion({
     activateOnTyping: true,
     override: [
@@ -21,13 +21,12 @@ const autocompleteExtension = ({ id, languageServerManager }: Args) => {
         try {
           const charBefore = ctx.matchBefore(/./)?.text;
 
-          const completions =
-            await languageServerManager.getAutocompleteResults({
-              fileId: id,
-              pos,
-              explicit,
-              charBefore,
-            });
+          const completions = await languageServer.getAutocompleteResults({
+            fileId: id,
+            pos,
+            explicit,
+            charBefore,
+          });
 
           if (!completions) {
             console.warn("Unable to get completions", { pos });

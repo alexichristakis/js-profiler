@@ -1,12 +1,26 @@
 import { Dispatch } from "react";
+import { RuntimeError } from "runtime/types";
 
-export type TestCase = { id: string; code: string };
+export type ExecutionError = {
+  error: string;
+  message: string;
+};
+
+export type TestCase = {
+  id: string;
+  code: string;
+};
 
 export type TestResult = {
   id: string;
   progress: number;
   iterations: number;
   averageTime: number;
+};
+
+export type TestError = {
+  id: string;
+  error: ExecutionError;
 };
 
 export type AddTestCaseAction = {
@@ -44,6 +58,12 @@ export type ReceiveResultsAction = {
   id: string;
 };
 
+export type ReceiveErrorAction = {
+  type: "RECEIVE_ERROR";
+  id: string;
+  error: RuntimeError;
+};
+
 export type Action =
   | AddTestCaseAction
   | EditTestCaseAction
@@ -51,6 +71,7 @@ export type Action =
   | ToggleRunningAction
   | ReceiveResultsAction
   | StopAllAction
-  | EditPreloadedJSAction;
+  | EditPreloadedJSAction
+  | ReceiveErrorAction;
 
 export type SelectedToolDispatch = Dispatch<AddTestCaseAction>;

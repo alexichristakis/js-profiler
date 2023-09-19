@@ -41,10 +41,10 @@ const CodeMirror: ForwardRefRenderFunction<HTMLDivElement, CodeMirrorProps> = (
   outerRef
 ) => {
   const ref = useRef<HTMLDivElement>(null);
-  const languageServerManager = useLanguageServer();
+  const languageServer = useLanguageServer();
 
   const updateFile = useCallbackRef((value: string) => {
-    languageServerManager.updateFile({ fileId: id, isModule, file: value });
+    languageServer.updateFile({ fileId: id, isModule, file: value });
   });
 
   useMountEffect(() => {
@@ -71,10 +71,10 @@ const CodeMirror: ForwardRefRenderFunction<HTMLDivElement, CodeMirrorProps> = (
       EditorView.updateListener.of(handleChange),
       highlightSpecialChars(),
       EditorState.allowMultipleSelections.of(true),
-      autocompleteExtension({ languageServerManager, id }),
-      hoverTooltipExtension({ languageServerManager, id }),
-      formattingExtension({ languageServerManager, id }),
-      lintingExtension({ languageServerManager, id }),
+      autocompleteExtension({ languageServer, id }),
+      hoverTooltipExtension({ languageServer, id }),
+      formattingExtension({ languageServer, id }),
+      lintingExtension({ languageServer, id }),
       javascript({ typescript: true }),
       closeBrackets(),
       syntaxHighlighting(defaultHighlightStyle, { fallback: true }),

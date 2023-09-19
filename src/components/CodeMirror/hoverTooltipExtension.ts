@@ -3,13 +3,13 @@ import LanguageServerManager from "languageServer/LanguageServerManager";
 
 type Args = {
   id: string;
-  languageServerManager: LanguageServerManager;
+  languageServer: LanguageServerManager;
 };
 
-const hoverTooltipExtension = ({ id, languageServerManager }: Args) => {
+const hoverTooltipExtension = ({ id, languageServer }: Args) => {
   return hoverTooltip(
     async (_, pos): Promise<Tooltip | null> => {
-      const quickInfo = await languageServerManager.getQuickInfo(id, pos);
+      const quickInfo = await languageServer.getQuickInfo(id, pos);
       if (!quickInfo) {
         return null;
       }

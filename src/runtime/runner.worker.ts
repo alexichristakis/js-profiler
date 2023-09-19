@@ -52,10 +52,7 @@ const rpcRegistry = new RpcRegistry<HostRPCMethodConfigs>({
       `
     );
 
-    const startTime = performance.now();
     const { status, times, runError, preloadedJSError } = await run(time);
-    console.log(performance.now() - startTime);
-
     if (status === "error") {
       return { error: { runError, preloadedJSError } };
     }

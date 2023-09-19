@@ -1,10 +1,22 @@
 import { v4 } from "uuid";
 import { produce } from "immer";
 import { State } from "./context";
-import { Action } from "./types";
+import { Action, ExecutionError } from "./types";
+import { assertNever } from "utils/typeguards";
+import { toObject, toString } from "utils/cast";
+
+const formatError = (error: unknown): ExecutionError => {
+  const { stack, message } = toObject(error);
+
+  return {
+    error: toString(stack).split(":")[0] || "Unknown error",
+    message: toString(message),
+  };
+};
 
 const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
+  const { type } = action;
+  switch (type) {
     case "STOP_ALL": {
       return produce(state, (draft) => {
         draft.runningCases = new Set();
@@ -67,11 +79,14 @@ const reducer = (state: State, action: Action): State => {
       const { id, times, progress } = action;
 
       return produce(state, (draft) => {
-        const { testResults } = draft;
+        const { testResults, testErrors } = draft;
 
         if (progress === 1) {
           draft.runningCases.delete(id);
         }
+
+        // clear any errors
+        draft.testErrors = testErrors.filter((error) => error.id !== id);
 
         const result = testResults.find((result) => result.id === id);
         if (!result) {
@@ -99,7 +114,29 @@ const reducer = (state: State, action: Action): State => {
       });
     }
 
+    case "RECEIVE_ERROR": {
+      const { id, error } = action;
+      const { preloadedJSError, runError } = error;
+
+      return produce(state, (draft) => {
+        if (preloadedJSError) {
+          draft.preloadedJSError = formatError(preloadedJSError);
+          return;
+        }
+
+        const { testErrors } = draft;
+        const existingError = testErrors.find((error) => error.id === id);
+        if (!existingError) {
+          draft.testErrors.push({ id, error: formatError(runError) });
+          return;
+        }
+
+        existingError.error = formatError(runError);
+      });
+    }
+
     default: {
+      assertNever(type);
       return state;
     }
   }

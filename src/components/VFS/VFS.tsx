@@ -1,5 +1,5 @@
 import useLanguageServer from "languageServer/useLanguageServer";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import styles from "./VFS.module.scss";
 import useMountEffect from "hooks/useMountEffect";
 import useCallbackRef from "hooks/useCallbackRef";
@@ -8,7 +8,7 @@ import File from "./File";
 import useUpdateEffect from "hooks/useUpdateEffect";
 
 const VFS: FC = () => {
-  const languageServerManager = useLanguageServer();
+  const languageServer = useLanguageServer();
 
   const [fileList, setFileList] = useState<string[]>([]);
   const [focusedFile, setFocusedFile] = useState<string | null>(null);
@@ -17,12 +17,12 @@ const VFS: FC = () => {
   );
 
   const requestFileList = useCallbackRef(async () => {
-    const fileList = await languageServerManager.getFileList();
+    const fileList = await languageServer.getFileList();
     setFileList(fileList ?? []);
   });
 
   const requestFileContents = useCallbackRef(async (path: string) => {
-    const file = await languageServerManager.getFile(path);
+    const file = await languageServer.getFile(path);
     setFocusedFileContents(file ?? null);
   });
 

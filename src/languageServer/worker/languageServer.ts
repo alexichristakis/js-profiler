@@ -10,10 +10,11 @@ import {
   LintArgs,
   SerializedDiagnostic,
   UpdateFileArgs,
+  TranspileFileArgs,
 } from "./types";
 import { VirtualTypeScriptEnvironment } from "@typescript/vfs";
 import setupEnv from "./setupEnv";
-import { assertIsNotNullish } from "typeguards";
+import { assertIsNotNullish } from "utils/typeguards";
 import {
   FormatCodeSettings,
   displayPartsToString,
@@ -52,11 +53,13 @@ const formatCodeSettings: FormatCodeSettings = {
 };
 
 class LanguageServer {
-  rpc: RpcRegistry<HostRPCMethodConfigs>;
-  env: VirtualTypeScriptEnvironment | null = null;
+  private rpc: RpcRegistry<HostRPCMethodConfigs>;
+  private env: VirtualTypeScriptEnvironment | null = null;
+  private modules: Set<string> = new Set();
 
   constructor() {
     this.rpc = new RpcRegistry<HostRPCMethodConfigs>({
+      transpileFile: this.transpileFile,
       updateFile: this.updateFile,
       info: this.info,
       autocomplete: this.autocomplete,
@@ -70,6 +73,10 @@ class LanguageServer {
 
     this.initialize();
   }
+
+  call = async (...args: Parameters<typeof this.rpc.callMethod>) => {
+    return this.rpc.callMethod(...args);
+  };
 
   private initialize = async () => {
     this.env = await setupEnv();
@@ -89,6 +96,12 @@ class LanguageServer {
 
     const formattedFile = isModule ? `${file}\nexport default {};` : file;
 
+    if (isModule) {
+      this.modules.add(fileId);
+    } else {
+      this.modules.delete(fileId);
+    }
+
     if (!this.env.sys.fileExists(fileName)) {
       this.env.createFile(fileName, formattedFile);
     } else {
@@ -96,12 +109,37 @@ class LanguageServer {
     }
   };
 
+  transpileFile = ({ fileId }: TranspileFileArgs) => {
+    assertIsNotNullish(this.env, "env not ready");
+
+    const fileName = this.getFileName(fileId);
+    const { outputFiles } = this.env.languageService.getEmitOutput(
+      fileName,
+      false,
+      false
+    );
+
+    const [emittedFile] = outputFiles;
+
+    console.log(outputFiles);
+
+    const contents = emittedFile?.text ?? "";
+
+    if (!this.modules.has(fileId)) {
+      return contents;
+    }
+
+    // if it's a module, trim the lines that define exports
+    const lines = contents.split("\n");
+    return lines.slice(2, -2).join("\n");
+  };
+
   deleteFile = ({ fileId }: DeleteFileArgs) => {
     this.env?.updateFile(this.getFileName(fileId), "");
   };
 
-  getFile = ({ fileId }: GetFileArgs) => {
-    return this.env?.getSourceFile(fileId)?.getFullText();
+  getFile = ({ filePath }: GetFileArgs) => {
+    return this.env?.getSourceFile(filePath)?.getFullText();
   };
 
   getFileList = () => {

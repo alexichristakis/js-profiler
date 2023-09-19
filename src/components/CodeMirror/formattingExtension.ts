@@ -5,16 +5,13 @@ import { Extension } from "@codemirror/state";
 
 type Args = {
   id: string;
-  languageServerManager: LanguageServerManager;
+  languageServer: LanguageServerManager;
 };
 
-const formattingExtension = ({
-  id,
-  languageServerManager,
-}: Args): Extension => {
+const formattingExtension = ({ id, languageServer }: Args): Extension => {
   const formatCode: Command = ({ dispatch, state }) => {
     void (async () => {
-      const { changes } = await languageServerManager.getFormattingChanges(id);
+      const { changes } = await languageServer.getFormattingChanges(id);
       if (!changes) {
         return false;
       }

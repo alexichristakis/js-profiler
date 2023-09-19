@@ -1,12 +1,10 @@
 import PreloadedJS from "components/PreloadedJS";
 import TestCase from "components/TestCase";
-import useIsRunning from "context/useIsRunning";
 import useSelector from "context/useSelector";
 import { FC } from "react";
 import styles from "./Editor.module.scss";
 
 const Editor: FC = () => {
-  const isRunning = useIsRunning();
   const cases = useSelector(({ testCases }) => testCases);
   return (
     <main className={styles.main}>
@@ -14,7 +12,6 @@ const Editor: FC = () => {
       {cases.map(({ id, code }) => (
         <TestCase key={id} id={id} code={code} />
       ))}
-      {isRunning ? "RUNNING" : "IDLE"}
     </main>
   );
 };
