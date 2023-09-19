@@ -12,18 +12,14 @@ const TestResults: FC<TestResultsProps> = ({ id }) => {
     return null;
   }
 
-  const { averageTime = 0, iterations = 0 } = results;
+  const { averageTime = 0, iterations = 0, progress } = results;
   return (
     <div className={styles.main}>
       <table className={styles.table}>
         <tbody>
           <tr>
-            <td>Avg</td>
-            <td>{averageTime}</td>
-          </tr>
-          <tr>
-            <td>Iterations</td>
-            <td>{iterations}</td>
+            <td>Iterations / sec:</td>
+            <td>{Math.round(iterations / (10000 * progress))}</td>
           </tr>
         </tbody>
       </table>

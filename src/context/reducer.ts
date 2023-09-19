@@ -36,6 +36,17 @@ const reducer = (state: State, action: Action): State => {
       });
     }
 
+    case "TOGGLE_COLLAPSED": {
+      const { id } = action;
+      return produce(state, (draft) => {
+        if (draft.collapsedCases.has(id)) {
+          draft.collapsedCases.delete(id);
+        } else {
+          draft.collapsedCases.add(id);
+        }
+      });
+    }
+
     case "EDIT_PRELOADED_JS": {
       const { preloadedJS } = action;
       return produce(state, (draft) => {

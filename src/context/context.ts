@@ -10,6 +10,7 @@ import {
 
 export type State = {
   runningCases: Set<string>;
+  collapsedCases: Set<string>;
   preloadedJS: string;
   preloadedJSError: ExecutionError | null;
   testCases: TestCase[];

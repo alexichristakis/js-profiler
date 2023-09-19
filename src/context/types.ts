@@ -65,6 +65,11 @@ export type ReceiveErrorAction = {
   error: RuntimeError;
 };
 
+export type ToggleCollapsed = {
+  type: "TOGGLE_COLLAPSED";
+  id: string;
+};
+
 export type Action =
   | AddTestCaseAction
   | EditTestCaseAction
@@ -73,6 +78,7 @@ export type Action =
   | ReceiveResultsAction
   | StopAllAction
   | EditPreloadedJSAction
-  | ReceiveErrorAction;
+  | ReceiveErrorAction
+  | ToggleCollapsed;
 
 export type SelectedToolDispatch = Dispatch<AddTestCaseAction>;

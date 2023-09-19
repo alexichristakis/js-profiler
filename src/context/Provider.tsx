@@ -5,31 +5,33 @@ import useCallbackRef from "hooks/useCallbackRef";
 
 const initialState: State = {
   runningCases: new Set(),
-  preloadedJS: "const hello = 'world'",
+  collapsedCases: new Set(),
+  preloadedJS:
+    "const nums = new Array(1000).fill(null).map(() => Math.random())",
   preloadedJSError: null,
   testCases: [
     {
+      id: "case1",
       title: "for const loop",
       code: "let max = -Infinity;\nfor (const num of nums) {\n  if (num > max) {\n    max = num;\n  }\n}",
-      id: "a",
     },
     {
+      id: "case2",
       title: "forEach loop",
       code: "let max = -Infinity;\nnums.forEach(num => {\n  if (num > max) {\n    max = num;\n  }\n});",
-      id: "b",
     },
     {
+      id: "case3",
       title: "Math.max",
       code: "Math.max(...nums);",
-      id: "c",
     },
     {
-      id: "7c28d7c3-80d8-428e-a25d-d1e9ade9b218",
+      id: "case4",
       title: "for let loop",
       code: "let max = -Infinity;\nfor (let i = 0; i < nums.length; i++) {\n  const num = nums[i];\n  if (num > max) {\n    max = num;\n  }\n}",
     },
     {
-      id: "2b2f1264-a8f1-4ead-bbad-30f7fe8c73d1",
+      id: "case5",
       title: "reduce",
       code: "nums.reduce((max, num) => num > max ? num : max, -Infinity);",
     },

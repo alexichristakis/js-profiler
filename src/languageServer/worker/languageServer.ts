@@ -75,7 +75,11 @@ class LanguageServer {
   }
 
   call = async (...args: Parameters<typeof this.rpc.callMethod>) => {
-    return this.rpc.callMethod(...args);
+    try {
+      return this.rpc.callMethod(...args);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   private initialize = async () => {

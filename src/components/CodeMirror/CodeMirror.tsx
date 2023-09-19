@@ -3,7 +3,12 @@ import {
   closeBracketsKeymap,
   completionKeymap,
 } from "@codemirror/autocomplete";
-import { history, historyKeymap, defaultKeymap, indentWithTab } from "@codemirror/commands";
+import {
+  history,
+  historyKeymap,
+  defaultKeymap,
+  indentWithTab,
+} from "@codemirror/commands";
 import { javascript } from "@codemirror/lang-javascript";
 import {
   bracketMatching,
@@ -41,6 +46,7 @@ const CodeMirror: ForwardRefRenderFunction<HTMLDivElement, CodeMirrorProps> = (
   outerRef
 ) => {
   const ref = useRef<HTMLDivElement>(null);
+  const viewRef = useRef<EditorView | null>(null);
   const languageServer = useLanguageServer();
 
   const updateFile = useCallbackRef((value: string) => {
@@ -85,7 +91,7 @@ const CodeMirror: ForwardRefRenderFunction<HTMLDivElement, CodeMirrorProps> = (
         ...foldKeymap,
         ...completionKeymap,
         ...historyKeymap,
-        indentWithTab
+        indentWithTab,
       ]),
     ];
 
@@ -99,6 +105,7 @@ const CodeMirror: ForwardRefRenderFunction<HTMLDivElement, CodeMirrorProps> = (
       parent,
     });
 
+    viewRef.current = view;
     return () => {
       view.destroy();
     };
