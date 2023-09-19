@@ -7,7 +7,7 @@
 
 .sidebar {
   width: 300px;
-  padding: 4px 8px;
+  padding: 4px 8px 8px 8px;
   border-radius: 7px 0 0 7px;
   background-color: rgba(0, 0, 0, 0.04);
   border-right: 1px solid rgba(0, 0, 0, 0.12);
@@ -32,6 +32,13 @@
   align-items: center;
   gap: 4px;
   margin-bottom: 8px;
+}
+
+.headerGroup {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex: 1;
 }
 
 .body {

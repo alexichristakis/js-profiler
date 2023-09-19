@@ -9,8 +9,8 @@ const Editor: FC = () => {
   return (
     <main className={styles.main}>
       <PreloadedJS />
-      {cases.map(({ id, code }) => (
-        <TestCase key={id} id={id} code={code} />
+      {cases.map(({ id, ...rest }) => (
+        <TestCase key={id} id={id} {...rest} />
       ))}
     </main>
   );

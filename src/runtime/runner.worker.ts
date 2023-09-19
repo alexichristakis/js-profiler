@@ -21,6 +21,22 @@ const rpcRegistry = new RpcRegistry<HostRPCMethodConfigs>({
     const timeVariableName = makeRandomVariableName();
     const iterationStartTimeVariableName = makeRandomVariableName();
 
+    // syntax errors will throw when we create the function.
+    // create functions with preloaded JS and test case code separately to report errors individually.
+    try {
+      // eslint-disable-next-line no-new-func
+      new Function(preloadedJS);
+    } catch (err) {
+      return { error: { runError: undefined, preloadedJSError: err } };
+    }
+
+    try {
+      // eslint-disable-next-line no-new-func
+      new Function(code);
+    } catch (err) {
+      return { error: { runError: err, preloadedJSError: undefined } };
+    }
+
     // eslint-disable-next-line no-new-func
     const run = new Function(
       timeVariableName,

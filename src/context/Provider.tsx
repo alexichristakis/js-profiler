@@ -9,10 +9,12 @@ const initialState: State = {
   preloadedJSError: null,
   testCases: [
     {
+      title: "log",
       code: "console.log(hello)",
       id: "log",
     },
     {
+      title: "for loop",
       code: `let sum = 0
 for (let i = 0; i < 1000000; i++) {
   sum += i
@@ -20,6 +22,7 @@ for (let i = 0; i < 1000000; i++) {
       id: "a",
     },
     {
+      title: "forEach loop",
       code: `let sum = 0
 const arr = new Array(1000000).fill(null)
 Array.from(arr.keys()).forEach(key => {
@@ -28,6 +31,7 @@ Array.from(arr.keys()).forEach(key => {
       id: "b",
     },
     {
+      title: "reduce",
       code: `const sum = Array.from(new Array(1000000)).reduce((acc, value) => acc + value, 0)`,
       id: "c",
     },

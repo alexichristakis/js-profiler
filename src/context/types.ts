@@ -8,6 +8,7 @@ export type ExecutionError = {
 
 export type TestCase = {
   id: string;
+  title: string;
   code: string;
 };
 

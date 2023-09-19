@@ -9,7 +9,7 @@ type Args = {
 
 type RunArgs = {
   preloadedJS: string;
-  testCases: TestCase[];
+  testCases: Pick<TestCase, "id" | "code">[];
   abortSignal: AbortSignal;
   /** How long to run the suite for in ms */
   time: number;

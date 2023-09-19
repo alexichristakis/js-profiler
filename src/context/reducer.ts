@@ -45,7 +45,11 @@ const reducer = (state: State, action: Action): State => {
 
     case "ADD_CASE": {
       return produce(state, (draft) => {
-        draft.testCases.push({ id: v4(), code: "// Your code goes here" });
+        draft.testCases.push({
+          id: v4(),
+          title: `New test case ${draft.testCases.length || ""}`,
+          code: "// Your code goes here",
+        });
         return draft;
       });
     }
@@ -59,6 +63,7 @@ const reducer = (state: State, action: Action): State => {
         }
 
         oldCase.code = testCase.code;
+        oldCase.title = testCase.title;
 
         return draft;
       });

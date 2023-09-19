@@ -4,4 +4,8 @@
   @include inputReset();
   padding: 0;
   line-height: 16px;; 
+
+  &.bold {
+    font-weight: 500;
+  }
 }
