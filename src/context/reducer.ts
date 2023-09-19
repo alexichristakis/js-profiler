@@ -124,6 +124,8 @@ const reducer = (state: State, action: Action): State => {
       const { preloadedJSError, runError } = error;
 
       return produce(state, (draft) => {
+        draft.runningCases.delete(id);
+
         if (preloadedJSError) {
           draft.preloadedJSError = formatError(preloadedJSError);
           return;

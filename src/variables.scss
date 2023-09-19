@@ -1,0 +1,11 @@
+@mixin variables {
+  --accent: #1472ff;
+
+  --neutral-0: white;
+  --neutral-100: rgba(245, 245, 245);
+  --neutral-200: rgba(215, 215, 215);
+  --neutral-300: rgba(200, 200, 200);
+
+  --text-100: rgba(125, 125, 125, 1);
+  --text-500: rgba(50, 50, 50, 1);
+}

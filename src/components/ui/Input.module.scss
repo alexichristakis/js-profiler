@@ -3,7 +3,12 @@
 .main {
   @include inputReset();
   padding: 0;
-  line-height: 16px;; 
+  line-height: 16px;
+  color: var(--text-500);
+
+  &::placeholder {
+    color: var(--text-100);
+  }
 
   &.bold {
     font-weight: 500;
