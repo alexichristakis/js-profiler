@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import styles from "./Alert.module.scss";
 import classNames from "classnames/bind";
+import AlertIcon from "icons/Alert";
 
 const cx = classNames.bind(styles);
 
@@ -15,8 +16,11 @@ export type AlertProps = {
 const Alert: FC<AlertProps> = ({ level, title, message }) => {
   return (
     <div className={cx("main", level)}>
-      <div className={styles.title}>{title}</div>
-      <span className={styles.message}>{message}</span>
+      <AlertIcon className={styles.icon} />
+      <div className={styles.content}>
+        <div className={styles.title}>{title}</div>
+        <span className={styles.message}>{message}</span>
+      </div>
     </div>
   );
 };

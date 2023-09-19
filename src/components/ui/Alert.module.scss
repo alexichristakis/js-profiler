@@ -1,9 +1,10 @@
 .main {
   display: flex;
-  flex-direction: column;
   font-size: 16px;
   border-radius: 8px;
-  padding: 4px 8px;
+  padding: 4px 6px 4px 12px;
+  position: relative;
+  overflow: hidden;
 
   --border-color: transparent;
   --background-color: transparent;
@@ -20,9 +21,33 @@
 
   border: 1px solid var(--border-color);
   background-color: var(--background-color);
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background-color: var(--border-color);
+  }
+}
+
+.icon {
+  width: 16px;
+  height: 20px;
+  color: rgba(255, 0, 0, 0.75);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  margin-left: 6px;
+  opacity: 0.75;
 }
 
 .title {
+  line-height: 20px;
   font-weight: 500;
 }
 

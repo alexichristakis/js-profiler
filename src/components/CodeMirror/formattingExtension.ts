@@ -9,14 +9,21 @@ type Args = {
 };
 
 const formattingExtension = ({ id, languageServer }: Args): Extension => {
+  let isFormatting = false;
   const formatCode: Command = ({ dispatch, state }) => {
+    if (isFormatting) {
+      return false;
+    }
+
     void (async () => {
+      isFormatting = true;
       const { changes } = await languageServer.getFormattingChanges(id);
       if (!changes) {
         return false;
       }
 
       dispatch({ changes: getCodeMirrorChanges(state, changes) });
+      isFormatting = false;
 
       return true;
     })();

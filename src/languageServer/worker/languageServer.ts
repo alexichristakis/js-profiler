@@ -121,8 +121,6 @@ class LanguageServer {
 
     const [emittedFile] = outputFiles;
 
-    console.log(outputFiles);
-
     const contents = emittedFile?.text ?? "";
 
     if (!this.modules.has(fileId)) {
@@ -154,6 +152,11 @@ class LanguageServer {
       formatCodeSettings
     );
 
+    console.log("format", {
+      contents: this.getFile({ filePath: this.getFileName(fileId) }),
+      fileId,
+      changes,
+    });
     return { changes };
   };
 
