@@ -26,6 +26,8 @@ import styles from "./CodeMirror.module.scss";
 import useLanguageServer from "languageServer/useLanguageServer";
 import hoverTooltipExtension from "./hoverTooltipExtension";
 import autocompleteExtension from "./autocompleteExtension";
+import formattingExtension from "./formattingExtension";
+import lintingExtension from "./lintingExtension";
 
 type CodeMirrorProps = {
   id: string;
@@ -62,6 +64,8 @@ const CodeMirror: ForwardRefRenderFunction<HTMLDivElement, CodeMirrorProps> = (
       EditorState.allowMultipleSelections.of(true),
       autocompleteExtension({ languageServerManager, id }),
       hoverTooltipExtension({ languageServerManager, id }),
+      formattingExtension({ languageServerManager, id }),
+      lintingExtension({ languageServerManager, id }),
       javascript({ typescript: true }),
       closeBrackets(),
       syntaxHighlighting(defaultHighlightStyle, { fallback: true }),

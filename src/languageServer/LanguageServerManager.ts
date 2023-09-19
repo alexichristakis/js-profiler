@@ -1,5 +1,5 @@
 import { v4 } from "uuid";
-import Worker, { Payload } from "./worker/languageServer.worker";
+import Worker from "./worker/languageServer.worker";
 import {
   AutocompleteArgs,
   HostMethods,
@@ -49,7 +49,11 @@ class LanguageServerManager {
   };
 
   getLintDiagnostics = async (fileId: string) => {
-    //
+    return this.postMessage("lint", { fileId });
+  };
+
+  getFormattingChanges = async (fileId: string) => {
+    return this.postMessage("format", { fileId });
   };
 
   getAutocompleteResults = async (args: AutocompleteArgs) => {

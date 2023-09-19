@@ -2,19 +2,26 @@ import RpcRegistry from "rpc/registry";
 import {
   AutocompleteArgs,
   AutocompleteEntries,
+  FormatFileArgs,
   HostRPCMethodConfigs,
   InfoArgs,
+  LintArgs,
+  SerializedDiagnostic,
   UpdateFileArgs,
 } from "./types";
 import { VirtualTypeScriptEnvironment } from "@typescript/vfs";
 import setupEnv from "./setupEnv";
 import { assertIsNotNullish } from "typeguards";
-import ts, {
+import {
   FormatCodeSettings,
   displayPartsToString,
   CompletionsTriggerCharacter,
   CompletionTriggerKind,
+  SemicolonPreference,
+  IndentStyle,
+  DiagnosticMessageChain,
 } from "typescript";
+import { Diagnostic } from "@codemirror/lint";
 
 const triggerCharacters = new Set<string | undefined>([
   ".",
@@ -29,12 +36,12 @@ const triggerCharacters = new Set<string | undefined>([
 ]);
 
 const formatCodeSettings: FormatCodeSettings = {
-  semicolons: ts.SemicolonPreference.Insert,
+  semicolons: SemicolonPreference.Insert,
   trimTrailingWhitespace: true,
   indentSize: 2,
   tabSize: 2,
   convertTabsToSpaces: true,
-  indentStyle: ts.IndentStyle.Smart,
+  indentStyle: IndentStyle.Smart,
   insertSpaceAfterCommaDelimiter: true,
   insertSpaceAfterKeywordsInControlFlowStatements: true,
   insertSpaceAfterSemicolonInForStatements: true,
@@ -51,9 +58,9 @@ class LanguageServer {
       updateFile: this.updateFile,
       info: this.info,
       autocomplete: this.autocomplete,
-      // @ts-expect-error
-      lint: () => {},
-      formatFile: () => {},
+      lint: this.lint,
+      format: this.formatFile,
+      applyAction: () => {},
     });
 
     this.initialize();
@@ -79,6 +86,101 @@ class LanguageServer {
     } else {
       this.env.updateFile(fileName, file);
     }
+  };
+
+  formatFile = ({ fileId }: FormatFileArgs) => {
+    assertIsNotNullish(this.env, "env not ready");
+
+    const changes = this.env.languageService.getFormattingEditsForDocument(
+      this.getFileName(fileId),
+      formatCodeSettings
+    );
+
+    return { changes };
+  };
+
+  lint = ({ fileId }: LintArgs) => {
+    assertIsNotNullish(this.env, "env not ready");
+    const fileName = this.getFileName(fileId);
+    const { languageService: ls } = this.env;
+
+    const syntacticDiagnostics = ls.getSyntacticDiagnostics(fileName);
+    const semanticDiagnostic = ls.getSemanticDiagnostics(fileName);
+    const suggestionDiagnostics = ls.getSuggestionDiagnostics(fileName);
+
+    const diagnostics = [
+      ...syntacticDiagnostics,
+      ...semanticDiagnostic,
+      ...suggestionDiagnostics,
+    ].reduce(
+      (acc, { start = 0, source, category, messageText, length = 0, code }) => {
+        const from = start;
+        const to = start + length;
+
+        const codeActions = ls.getCodeFixesAtPosition(
+          fileName,
+          from,
+          to,
+          [code],
+          {},
+          {}
+        );
+
+        type ErrorMessageObj = {
+          messageText: string;
+          next?: ErrorMessageObj[];
+        };
+
+        const getNestedMessages = (
+          message: string | DiagnosticMessageChain
+        ): string[] => {
+          if (typeof message === "string") {
+            return [message];
+          }
+
+          const messageList: string[] = [];
+          const getMessage = ({ messageText, next }: ErrorMessageObj) => {
+            messageList.push(messageText);
+            if (!next) {
+              return;
+            }
+
+            for (const item of next) {
+              getMessage(item);
+            }
+          };
+
+          getMessage(message);
+          return messageList;
+        };
+
+        const severity: Diagnostic["severity"][] = [
+          "warning",
+          "error",
+          "info",
+          "info",
+        ];
+
+        for (const message of getNestedMessages(messageText)) {
+          acc.push({
+            from,
+            to,
+            message: `${message} (${code})`,
+            source,
+            severity: severity[category],
+            serializedActions: codeActions.map((action) => ({
+              name: action.description,
+              data: action,
+            })),
+          });
+        }
+
+        return acc;
+      },
+      [] as SerializedDiagnostic[]
+    );
+
+    return { diagnostics };
   };
 
   info = ({ fileId, pos }: InfoArgs) => {

@@ -14,7 +14,7 @@ const hoverTooltipExtension = ({ id, languageServerManager }: Args) => {
         return null;
       }
 
-      const { result, tooltipText } = quickInfo;
+      const { tooltipText } = quickInfo;
 
       return {
         pos,

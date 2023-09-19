@@ -29,8 +29,6 @@ const autocompleteExtension = ({ id, languageServerManager }: Args) => {
               charBefore,
             });
 
-          console.log({ pos, charBefore, completions });
-
           if (!completions) {
             console.warn("Unable to get completions", { pos });
             return null;
@@ -53,15 +51,13 @@ const autocompleteExtension = ({ id, languageServerManager }: Args) => {
                 details?.sourceDisplay?.map((token) => token.text).join("") ||
                 sourceDisplayString;
 
-              const actions = details?.codeActions;
-
               return {
                 type: kind,
                 label: name,
                 displayLabel: name,
                 detail: source,
                 info: description,
-                apply: () => {},
+                apply: name,
                 boost: 1 / Number(sortText),
               };
             }

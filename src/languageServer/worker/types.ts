@@ -22,6 +22,10 @@ export type UpdateFileArgs = { fileId: string; file: string };
 
 export type InfoArgs = { fileId: string; pos: number };
 
+export type LintArgs = { fileId: string };
+
+export type FormatFileArgs = { fileId: string };
+
 export type AutocompleteArgs = {
   fileId: string;
   pos: number;
@@ -42,12 +46,12 @@ export type HostMethods =
     }
   | {
       method: "lint";
-      arguments: { fileId: string };
+      arguments: LintArgs;
       response: { diagnostics: SerializedDiagnostic[] };
     }
   | {
       method: "format";
-      arguments: { fileId: string };
+      arguments: FormatFileArgs;
       response: { changes: TextChange[] };
     }
   | {
