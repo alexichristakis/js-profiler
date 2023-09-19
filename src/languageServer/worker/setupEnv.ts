@@ -4,26 +4,26 @@ import {
   createSystem,
   createVirtualTypeScriptEnvironment,
 } from "@typescript/vfs";
-import ts, { CompilerOptions } from "typescript";
+import ts, { CompilerOptions, ModuleKind, ScriptTarget } from "typescript";
 
 export const JS_FS_ENTRY_POINT = "index.js";
 
-export const JS_COMPILER_OPTIONS: CompilerOptions = {
-  target: ts.ScriptTarget.ESNext,
-  module: ts.ModuleKind.CommonJS,
+const COMPILER_OPTIONS: CompilerOptions = {
+  target: ScriptTarget.ESNext,
+  module: ModuleKind.CommonJS,
   allowJs: true,
   checkJs: true,
   noEmit: true,
   resolveJsonModule: true,
   strict: true,
-  lib: ["es2020"],
+  lib: ["es2020", "dom"],
   esModuleInterop: true,
   forceConsistentCasingInFileNames: false,
 };
 
 const setupEnv = async (): Promise<VirtualTypeScriptEnvironment> => {
   const fsMap = await createDefaultMapFromCDN(
-    JS_COMPILER_OPTIONS,
+    COMPILER_OPTIONS,
     ts.version,
     false,
     ts
@@ -40,7 +40,7 @@ const setupEnv = async (): Promise<VirtualTypeScriptEnvironment> => {
     system,
     [JS_FS_ENTRY_POINT],
     ts,
-    JS_COMPILER_OPTIONS
+    COMPILER_OPTIONS
   );
 };
 

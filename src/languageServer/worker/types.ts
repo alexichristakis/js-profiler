@@ -18,13 +18,21 @@ export interface SerializedDiagnostic extends Diagnostic {
   serializedActions: SerializedAction[];
 }
 
-export type UpdateFileArgs = { fileId: string; file: string };
+export type UpdateFileArgs = {
+  fileId: string;
+  isModule?: boolean;
+  file: string;
+};
 
 export type InfoArgs = { fileId: string; pos: number };
 
 export type LintArgs = { fileId: string };
 
 export type FormatFileArgs = { fileId: string };
+
+export type DeleteFileArgs = { fileId: string };
+
+export type GetFileArgs = { fileId: string };
 
 export type AutocompleteArgs = {
   fileId: string;
@@ -43,6 +51,21 @@ export type HostMethods =
       method: "updateFile";
       arguments: UpdateFileArgs;
       response: void;
+    }
+  | {
+      method: "deleteFile";
+      arguments: DeleteFileArgs;
+      response: void;
+    }
+  | {
+      method: "getFile";
+      arguments: GetFileArgs;
+      response: string | undefined;
+    }
+  | {
+      method: "getFileList";
+      arguments: undefined;
+      response: string[] | undefined;
     }
   | {
       method: "lint";

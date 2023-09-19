@@ -1,9 +1,10 @@
 import { v4 } from "uuid";
 import Worker from "./worker/languageServer.worker";
-import {
+import type {
   AutocompleteArgs,
   HostMethods,
   HostRPCMethodConfigs,
+  UpdateFileArgs,
 } from "./worker/types";
 
 class LanguageServerManager {
@@ -44,8 +45,20 @@ class LanguageServerManager {
     this.messages.get(id)?.resolve(response);
   };
 
-  updateFile = (fileId: string, file: string) => {
-    return this.postMessage("updateFile", { fileId, file });
+  getFile = (fileId: string) => {
+    return this.postMessage("getFile", { fileId });
+  };
+
+  getFileList = () => {
+    return this.postMessage("getFileList", undefined);
+  };
+
+  updateFile = (args: UpdateFileArgs) => {
+    return this.postMessage("updateFile", args);
+  };
+
+  deleteFile = (fileId: string) => {
+    return this.postMessage("deleteFile", { fileId });
   };
 
   getLintDiagnostics = async (fileId: string) => {

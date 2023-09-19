@@ -6,7 +6,7 @@ const Provider: FC<PropsWithChildren> = ({ children }) => {
   const { run, abort } = useRuntime();
 
   return (
-    <Context.Provider value={useMemo(() => ({ run, abort }), [])}>
+    <Context.Provider value={useMemo(() => ({ run, abort }), [run, abort])}>
       {children}
     </Context.Provider>
   );

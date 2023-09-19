@@ -1,4 +1,5 @@
 import { Diagnostic, forceLinting, linter } from "@codemirror/lint";
+import { Extension } from "@codemirror/state";
 import LanguageServerManager from "languageServer/LanguageServerManager";
 
 type Args = {
@@ -6,7 +7,7 @@ type Args = {
   languageServerManager: LanguageServerManager;
 };
 
-const lintingExtension = ({ id, languageServerManager }: Args) => {
+const lintingExtension = ({ id, languageServerManager }: Args): Extension => {
   return linter(async () => {
     const { diagnostics } = await languageServerManager.getLintDiagnostics(id);
     if (!diagnostics) {

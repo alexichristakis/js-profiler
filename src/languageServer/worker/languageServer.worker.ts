@@ -12,7 +12,7 @@ export type Payload = {
 
 const languageServer = new LanguageServer();
 
-const messageQueue: MessageEvent<Payload>[] = [];
+let messageQueue: MessageEvent<Payload>[] = [];
 
 const processMessage = async (message: MessageEvent<Payload>) => {
   const { data } = message;
@@ -23,6 +23,7 @@ const processMessage = async (message: MessageEvent<Payload>) => {
 
 const flush = () => {
   messageQueue.map(processMessage);
+  messageQueue = [];
 };
 
 self.addEventListener("message", async (message: MessageEvent<Payload>) => {

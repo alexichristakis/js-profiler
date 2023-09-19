@@ -2,6 +2,8 @@ import RpcRegistry from "rpc/registry";
 import {
   AutocompleteArgs,
   AutocompleteEntries,
+  DeleteFileArgs,
+  GetFileArgs,
   FormatFileArgs,
   HostRPCMethodConfigs,
   InfoArgs,
@@ -60,6 +62,9 @@ class LanguageServer {
       autocomplete: this.autocomplete,
       lint: this.lint,
       format: this.formatFile,
+      deleteFile: this.deleteFile,
+      getFile: this.getFile,
+      getFileList: this.getFileList,
       applyAction: () => {},
     });
 
@@ -75,17 +80,32 @@ class LanguageServer {
   }
 
   private getFileName = (fileId: string) => {
-    return `${fileId}.ts`;
+    return `/${fileId}.ts`;
   };
 
-  updateFile = ({ fileId, file }: UpdateFileArgs) => {
+  updateFile = ({ fileId, file, isModule = false }: UpdateFileArgs) => {
     assertIsNotNullish(this.env, "env not ready");
     const fileName = this.getFileName(fileId);
+
+    const formattedFile = isModule ? `${file}\nexport default {};` : file;
+
     if (!this.env.sys.fileExists(fileName)) {
-      this.env.createFile(fileName, file);
+      this.env.createFile(fileName, formattedFile);
     } else {
-      this.env.updateFile(fileName, file);
+      this.env.updateFile(fileName, formattedFile);
     }
+  };
+
+  deleteFile = ({ fileId }: DeleteFileArgs) => {
+    this.env?.updateFile(this.getFileName(fileId), "");
+  };
+
+  getFile = ({ fileId }: GetFileArgs) => {
+    return this.env?.getSourceFile(fileId)?.getFullText();
+  };
+
+  getFileList = () => {
+    return this.env?.sys.readDirectory("/");
   };
 
   formatFile = ({ fileId }: FormatFileArgs) => {
@@ -112,7 +132,7 @@ class LanguageServer {
       ...syntacticDiagnostics,
       ...semanticDiagnostic,
       ...suggestionDiagnostics,
-    ].reduce(
+    ].reduce<SerializedDiagnostic[]>(
       (acc, { start = 0, source, category, messageText, length = 0, code }) => {
         const from = start;
         const to = start + length;
@@ -126,11 +146,6 @@ class LanguageServer {
           {}
         );
 
-        type ErrorMessageObj = {
-          messageText: string;
-          next?: ErrorMessageObj[];
-        };
-
         const getNestedMessages = (
           message: string | DiagnosticMessageChain
         ): string[] => {
@@ -139,7 +154,10 @@ class LanguageServer {
           }
 
           const messageList: string[] = [];
-          const getMessage = ({ messageText, next }: ErrorMessageObj) => {
+          const getMessage = ({
+            messageText,
+            next,
+          }: DiagnosticMessageChain) => {
             messageList.push(messageText);
             if (!next) {
               return;
@@ -177,7 +195,7 @@ class LanguageServer {
 
         return acc;
       },
-      [] as SerializedDiagnostic[]
+      []
     );
 
     return { diagnostics };

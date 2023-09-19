@@ -1,13 +1,17 @@
 import { Command, EditorView, keymap } from "@codemirror/view";
 import LanguageServerManager from "languageServer/LanguageServerManager";
 import getCodeMirrorChanges from "./getCodeMirrorChanges";
+import { Extension } from "@codemirror/state";
 
 type Args = {
   id: string;
   languageServerManager: LanguageServerManager;
 };
 
-const formattingExtension = ({ id, languageServerManager }: Args) => {
+const formattingExtension = ({
+  id,
+  languageServerManager,
+}: Args): Extension => {
   const formatCode: Command = ({ dispatch, state }) => {
     void (async () => {
       const { changes } = await languageServerManager.getFormattingChanges(id);

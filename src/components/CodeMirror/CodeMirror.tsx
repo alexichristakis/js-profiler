@@ -31,21 +31,30 @@ import lintingExtension from "./lintingExtension";
 
 type CodeMirrorProps = {
   id: string;
+  isModule?: boolean;
   value?: string;
   onChange?: (value: string) => void;
 };
 
 const CodeMirror: ForwardRefRenderFunction<HTMLDivElement, CodeMirrorProps> = (
-  { id, value, onChange },
+  { id, isModule = false, value, onChange },
   outerRef
 ) => {
   const ref = useRef<HTMLDivElement>(null);
   const languageServerManager = useLanguageServer();
 
+  const updateFile = useCallbackRef((value: string) => {
+    languageServerManager.updateFile({ fileId: id, isModule, file: value });
+  });
+
+  useMountEffect(() => {
+    updateFile(value ?? "");
+  });
+
   const handleChange = useCallbackRef(({ docChanged, state }: ViewUpdate) => {
     if (docChanged) {
       const value = state.doc.toString();
-      languageServerManager.updateFile(id, value);
+      updateFile(value);
       onChange?.(value);
     }
   });
