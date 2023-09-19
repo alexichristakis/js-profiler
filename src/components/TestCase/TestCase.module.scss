@@ -44,9 +44,9 @@
 .body {
   flex: 1 1 auto;
   border-radius: 0 7px 7px 0;
-  z-index: 1;
 
   &:focus-within {
+    z-index: 1;
     box-shadow: 0 0 0 1px var(--accent), 0 1px 0 1px var(--accent);
   }
 }

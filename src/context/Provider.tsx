@@ -9,31 +9,29 @@ const initialState: State = {
   preloadedJSError: null,
   testCases: [
     {
-      title: "log",
-      code: "console.log(hello)",
-      id: "log",
-    },
-    {
-      title: "for loop",
-      code: `let sum = 0
-for (let i = 0; i < 1000000; i++) {
-  sum += i
-}`,
+      title: "for const loop",
+      code: "let max = -Infinity;\nfor (const num of nums) {\n  if (num > max) {\n    max = num;\n  }\n}",
       id: "a",
     },
     {
       title: "forEach loop",
-      code: `let sum = 0
-const arr = new Array(1000000).fill(null)
-Array.from(arr.keys()).forEach(key => {
-  sum += key
-})`,
+      code: "let max = -Infinity;\nnums.forEach(num => {\n  if (num > max) {\n    max = num;\n  }\n});",
       id: "b",
     },
     {
-      title: "reduce",
-      code: `const sum = Array.from(new Array(1000000)).reduce((acc, value) => acc + value, 0)`,
+      title: "Math.max",
+      code: "Math.max(...nums);",
       id: "c",
+    },
+    {
+      id: "7c28d7c3-80d8-428e-a25d-d1e9ade9b218",
+      title: "for let loop",
+      code: "let max = -Infinity;\nfor (let i = 0; i < nums.length; i++) {\n  const num = nums[i];\n  if (num > max) {\n    max = num;\n  }\n}",
+    },
+    {
+      id: "2b2f1264-a8f1-4ead-bbad-30f7fe8c73d1",
+      title: "reduce",
+      code: "nums.reduce((max, num) => num > max ? num : max, -Infinity);",
     },
   ],
   testResults: [],
