@@ -7,6 +7,7 @@ import styles from "./TestCase.module.scss";
 import TestCaseSidebar from "./TestCaseSidebar";
 import useIsTestCollapsed from "context/useIsTestCollapsed";
 import classNames from "classnames/bind";
+import Box from "components/ui/Box";
 
 const cx = classNames.bind(styles);
 
@@ -22,7 +23,7 @@ const TestCase: FC<TestCaseProps> = ({ title, id, code }) => {
   });
 
   return (
-    <div className={cx("main", { isCollapsed })}>
+    <Box className={cx("main", { isCollapsed })}>
       <TestCaseSidebar
         id={id}
         title={title}
@@ -40,7 +41,7 @@ const TestCase: FC<TestCaseProps> = ({ title, id, code }) => {
           />
         )}
       </div>
-    </div>
+    </Box>
   );
 };
 

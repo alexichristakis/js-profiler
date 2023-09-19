@@ -33,6 +33,7 @@ import hoverTooltipExtension from "./hoverTooltipExtension";
 import autocompleteExtension from "./autocompleteExtension";
 import formattingExtension from "./formattingExtension";
 import lintingExtension from "./lintingExtension";
+import theme from "./theme";
 
 type CodeMirrorProps = {
   id: string;
@@ -85,6 +86,7 @@ const CodeMirror: ForwardRefRenderFunction<HTMLDivElement, CodeMirrorProps> = (
       closeBrackets(),
       syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
       bracketMatching(),
+      theme,
       keymap.of([
         ...closeBracketsKeymap,
         ...defaultKeymap,

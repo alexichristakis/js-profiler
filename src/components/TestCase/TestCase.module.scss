@@ -1,8 +1,4 @@
 .main {
-  display: flex;
-  border: 1px solid var(--neutral-300);
-  border-radius: 8px;
-  box-shadow: 0 1px 0 0 var(--neutral-200);
   height: fit-content;
 
   &.isCollapsed {

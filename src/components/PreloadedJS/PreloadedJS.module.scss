@@ -1,6 +1,12 @@
 .main {
-  display: flex;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 8px;
-  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.16);
+}
+
+.content {
+  flex: 1 1 auto;
+  border-radius: 7px;
+
+  &:focus-within {
+    z-index: 1;
+    box-shadow: 0 0 0 1px var(--accent), 0 1px 0 1px var(--accent);
+  }
 }
