@@ -13,6 +13,18 @@ export type Payload = {
 
 const makeRandomVariableName = () => `$${v4()}`.replaceAll("-", "");
 
+const min = (times: number[]) => {
+  let min = Infinity;
+  for (let i = 0; i < times.length; i++) {
+    const time = times[i];
+    if (time < min) {
+      min = time;
+    }
+  }
+
+  return min;
+};
+
 const rpcRegistry = new RpcRegistry<HostRPCMethodConfigs>({
   abort: () => {},
   run: async ({ preloadedJS, code, time }) => {
@@ -20,6 +32,8 @@ const rpcRegistry = new RpcRegistry<HostRPCMethodConfigs>({
     const timesVariableName = makeRandomVariableName();
     const timeVariableName = makeRandomVariableName();
     const iterationStartTimeVariableName = makeRandomVariableName();
+
+    console.log({ crossOriginIsolated });
 
     // syntax errors will throw when we create the function.
     // create functions with preloaded JS and test case code separately to report errors individually.
@@ -73,7 +87,10 @@ const rpcRegistry = new RpcRegistry<HostRPCMethodConfigs>({
       return { error: { runError, preloadedJSError } };
     }
 
-    return { times };
+    const minTime = min(times);
+    const iterations = times.length;
+    console.log(times);
+    return { minTime, iterations };
   },
 });
 

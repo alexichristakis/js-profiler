@@ -1,12 +1,10 @@
 import { useContextSelector } from "use-context-selector";
 import Context from "./context";
+import { assertIsNotNullish } from "utils/typeguards";
 
 const useDispatch = () => {
   return useContextSelector(Context, (store) => {
-    if (!store?.dispatch) {
-      throw new Error("");
-    }
-
+    assertIsNotNullish(store, "");
     return store.dispatch;
   });
 };

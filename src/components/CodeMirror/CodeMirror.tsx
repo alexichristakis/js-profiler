@@ -89,11 +89,11 @@ const CodeMirror: ForwardRefRenderFunction<HTMLDivElement, CodeMirrorProps> = (
       theme,
       keymap.of([
         ...closeBracketsKeymap,
-        ...defaultKeymap,
+        // ...defaultKeymap,
         ...foldKeymap,
         ...completionKeymap,
-        ...historyKeymap,
-        indentWithTab,
+        // ...historyKeymap,
+        // indentWithTab,
       ]),
     ];
 

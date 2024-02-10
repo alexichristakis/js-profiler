@@ -92,7 +92,7 @@ const reducer = (state: State, action: Action): State => {
     }
 
     case "RECEIVE_RESULTS": {
-      const { id, times, progress } = action;
+      const { id, iterations: iterationsInBatch, progress } = action;
 
       return produce(state, (draft) => {
         const { testResults, testErrors } = draft;
@@ -110,7 +110,7 @@ const reducer = (state: State, action: Action): State => {
             id,
             progress,
             averageTime: 0,
-            iterations: times.length,
+            iterations: iterationsInBatch,
           });
 
           return draft;
@@ -118,14 +118,15 @@ const reducer = (state: State, action: Action): State => {
 
         const { averageTime, iterations: oldIterations } = result;
 
-        const newIterations = oldIterations + times.length;
+        const newIterations = oldIterations + iterationsInBatch;
+        console.log({ oldIterations, newIterations });
 
-        const batchSum = times.reduce((acc, time) => acc + time, 0);
-        const newAverageTime =
-          (averageTime * oldIterations + batchSum) / newIterations;
+        // const batchSum = times.reduce((acc, time) => acc + time, 0);
+        // const newAverageTime =
+        //   (averageTime * oldIterations + batchSum) / newIterations;
 
         result.progress = progress;
-        result.averageTime = newAverageTime;
+        // result.averageTime = newAverageTime;
         result.iterations = newIterations;
       });
     }

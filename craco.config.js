@@ -1,4 +1,11 @@
 module.exports = {
+  devServer: {
+    headers: {
+      "Cross-Origin-Opener-Policy": "same-origin",
+      "Cross-Origin-Embedder-Policy": "require-corp",
+    },
+  },
+
   // Update webpack config to use custom loader for worker files
   webpack: {
     configure: (config) => {

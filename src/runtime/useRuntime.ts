@@ -16,10 +16,12 @@ const useRuntime = () => {
     const { testCases, preloadedJS } = getState();
 
     const runId = v4();
+    console.log({ runId });
 
     const runtime = new Runtime({
-      onReceiveTimes: (id, times, progress) => {
-        dispatch({ type: "RECEIVE_RESULTS", id, times, progress });
+      onReceiveTimes: (id, timingData) => {
+        console.log("RECEIVE_RESULTS", id, timingData.progress);
+        dispatch({ type: "RECEIVE_RESULTS", id, ...timingData });
       },
       onReceiveError: (id, error) => {
         dispatch({ type: "RECEIVE_ERROR", id, error });

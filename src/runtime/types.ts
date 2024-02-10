@@ -1,12 +1,14 @@
 import { RPCMethodConfigs } from "rpc/types";
 
-export type ReportTimes = (times: number[], progress: number) => void;
+export type TimingData = {
+  iterations: number;
+  minTime: number;
+  progress: number;
+};
 
-export type OnReceiveTimes = (
-  id: string,
-  times: number[],
-  progress: number
-) => void;
+export type ReportTimes = (timingData: TimingData & { hz: number }) => void;
+
+export type OnReceiveTimes = (id: string, timingData: TimingData) => void;
 
 export type RuntimeError = { preloadedJSError: unknown; runError: unknown };
 
@@ -16,7 +18,9 @@ export type HostMethods =
   | {
       method: "run";
       arguments: { preloadedJS: string; code: string; time: number };
-      response: { times: number[] } | { error: RuntimeError };
+      response:
+        | { minTime: number; iterations: number }
+        | { error: RuntimeError };
     }
   | {
       method: "abort";

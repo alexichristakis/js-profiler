@@ -2,6 +2,8 @@ import { v4 } from "uuid";
 import Worker, { Payload } from "./runner.worker";
 import { HostMethods, ReportTimes } from "./types";
 
+const STEP_TIME = 250;
+
 class Runner {
   private abortSignal: AbortSignal;
   private worker: Worker | null = null;
@@ -9,7 +11,13 @@ class Runner {
   private preloadedJS = "";
   private heartbeatTimeout: number | null = null;
   private reportTimes: ReportTimes;
-  private messageIds: Set<string> = new Set();
+  private messages: Map<
+    string,
+    {
+      resolve: (value: unknown) => void;
+      reject: (err: unknown) => void;
+    }
+  > = new Map();
   private promise: {
     resolve: (value: unknown) => void;
     reject: (err: unknown) => void;
@@ -30,36 +38,45 @@ class Runner {
     this.worker.onmessage = this.onMessage;
   };
 
-  private postMessage = (message: Payload) => {
-    this.worker?.postMessage(message);
+  private postMessage = (message: Omit<Payload, "id">) => {
+    const id = v4();
+    return new Promise((resolve, reject) => {
+      this.messages.set(id, { resolve, reject });
+      this.worker?.postMessage({ id, ...message });
+    });
   };
 
   private onMessage = (
     e: MessageEvent<{ id: string; response: HostMethods["response"] }>
   ) => {
     const { id, response } = e.data;
-    this.messageIds.delete(id);
+    this.messages.get(id)?.resolve(response);
+    this.messages.delete(id);
 
     const maxIterations = this.iterations ?? 0;
-    const progress = (maxIterations - this.messageIds.size) / maxIterations;
+    const progress = 1; // (maxIterations - this.messages.size) / maxIterations;
+
+    console.log({ maxIterations, size: this.messages.size, progress });
 
     if (response && "error" in response) {
       this.abort();
       const { error } = response;
       this.promise?.reject(error);
       return;
-    } else if (response && "times" in response) {
-      const { times } = response;
-      this.reportTimes(times, progress);
+    } else if (response) {
+      const { minTime, iterations } = response;
+      console.log({ minTime });
+      const hz = STEP_TIME / minTime;
+      this.reportTimes({ minTime, hz, iterations, progress });
     }
 
-    if (this.messageIds.size === 0) {
+    if (this.messages.size === 0) {
       this.promise?.resolve({});
     }
   };
 
   abort = () => {
-    this.postMessage({ id: v4(), method: "abort", args: undefined });
+    this.postMessage({ method: "abort", args: undefined });
     this.worker?.terminate();
 
     if (this.heartbeatTimeout != null) {
@@ -78,26 +95,21 @@ class Runner {
   };
 
   run = async (time: number) => {
-    const stepTime = 250;
-    const numIterations = time / stepTime;
+    const numIterations = 1; // time / STEP_TIME;
 
     this.iterations = numIterations;
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       this.promise = { resolve, reject };
       this.heartbeat();
 
       for (let i = 0; i < numIterations; i++) {
-        const id = v4();
-        this.messageIds.add(id);
-
-        this.postMessage({
-          id,
+        await this.postMessage({
           method: "run",
           args: {
             preloadedJS: this.preloadedJS,
             code: this.code,
-            time: stepTime,
+            time: STEP_TIME,
           },
         });
       }

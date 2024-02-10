@@ -1,5 +1,5 @@
 import { Dispatch } from "react";
-import { RuntimeError } from "runtime/types";
+import type { RuntimeError, TimingData } from "runtime/types";
 
 export type ExecutionError = {
   error: string;
@@ -54,10 +54,8 @@ export type StopAllAction = {
 
 export type ReceiveResultsAction = {
   type: "RECEIVE_RESULTS";
-  times: number[];
-  progress: number;
   id: string;
-};
+} & TimingData;
 
 export type ReceiveErrorAction = {
   type: "RECEIVE_ERROR";

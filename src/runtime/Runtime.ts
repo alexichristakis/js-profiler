@@ -29,7 +29,7 @@ class Runtime {
     const promises: Promise<unknown>[] = [];
     for (const { id, code } of testCases) {
       const runner = new Runner(
-        (times, progress) => this.reportTimes(id, times, progress),
+        (timingData) => this.reportTimes(id, timingData),
         abortSignal
       );
 

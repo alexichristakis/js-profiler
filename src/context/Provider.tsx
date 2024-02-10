@@ -13,29 +13,47 @@ const initialState: State = {
     {
       id: "case1",
       title: "for const loop",
-      code: "let max = -Infinity;\nfor (const num of nums) {\n  if (num > max) {\n    max = num;\n  }\n}",
+      code: '/o/.test("Hello World!");',
     },
     {
       id: "case2",
       title: "forEach loop",
-      code: "let max = -Infinity;\nnums.forEach(num => {\n  if (num > max) {\n    max = num;\n  }\n});",
+      code: '"Hello World!".indexOf("o") > -1;',
     },
     {
       id: "case3",
       title: "Math.max",
-      code: "Math.max(...nums);",
-    },
-    {
-      id: "case4",
-      title: "for let loop",
-      code: "let max = -Infinity;\nfor (let i = 0; i < nums.length; i++) {\n  const num = nums[i];\n  if (num > max) {\n    max = num;\n  }\n}",
-    },
-    {
-      id: "case5",
-      title: "reduce",
-      code: "nums.reduce((max, num) => num > max ? num : max, -Infinity);",
+      code: '!!"Hello World!".match(/o/);',
     },
   ],
+
+  // [
+  //   {
+  //     id: "case1",
+  //     title: "for const loop",
+  //     code: "let max = -Infinity;\nfor (const num of nums) {\n  if (num > max) {\n    max = num;\n  }\n}",
+  //   },
+  //   {
+  //     id: "case2",
+  //     title: "forEach loop",
+  //     code: "let max = -Infinity;\nnums.forEach(num => {\n  if (num > max) {\n    max = num;\n  }\n});",
+  //   },
+  //   {
+  //     id: "case3",
+  //     title: "Math.max",
+  //     code: "Math.max(...nums);",
+  //   },
+  //   {
+  //     id: "case4",
+  //     title: "for let loop",
+  //     code: "let max = -Infinity;\nfor (let i = 0; i < nums.length; i++) {\n  const num = nums[i];\n  if (num > max) {\n    max = num;\n  }\n}",
+  //   },
+  //   {
+  //     id: "case5",
+  //     title: "reduce",
+  //     code: "nums.reduce((max, num) => num > max ? num : max, -Infinity);",
+  //   },
+  // ],
   testResults: [],
   testErrors: [],
 };
