@@ -4,6 +4,8 @@ import useDispatch from "context/useDispatch";
 import styles from "./PreloadedJS.module.scss";
 import useSelector from "context/useSelector";
 import { PRELOADED_JS_ID } from "context/constants";
+import CircleButton from "components/ui/CircleButton";
+import Reload from "icons/Reload";
 import Box from "components/ui/Box";
 
 const PreloadedJS: FC = () => {
@@ -12,6 +14,14 @@ const PreloadedJS: FC = () => {
 
   return (
     <Box>
+      <div className={styles.header}>
+        <CircleButton
+          color="rgb(255, 188, 54)"
+          onClick={() => dispatch({ type: "RESET_PRELOADED_JS" })}
+        >
+          <Reload />
+        </CircleButton>
+      </div>
       <div className={styles.content}>
         <CodeMirror
           id={PRELOADED_JS_ID}

@@ -4,6 +4,7 @@ import Input from "components/ui/Input";
 import useDispatch from "context/useDispatch";
 import Close from "icons/Close";
 import Reload from "icons/Reload";
+import Duplicate from "icons/Duplicate";
 import useLanguageServer from "languageServer/useLanguageServer";
 import { FC } from "react";
 import useRuntimeContext from "runtime/useRuntimeContext";
@@ -55,6 +56,12 @@ const TestCaseSidebar: FC<TestCaseSidebarProps> = ({
             onClick={() => dispatch({ type: "TOGGLE_COLLAPSED", id })}
           >
             <Close />
+          </CircleButton>
+          <CircleButton
+            color="rgb(120, 120, 255)"
+            onClick={() => dispatch({ type: "DUPLICATE_CASE", id })}
+          >
+            <Duplicate />
           </CircleButton>
           <CircleButton color="rgb(36, 228, 45)" onClick={() => run(id)}>
             <Reload />

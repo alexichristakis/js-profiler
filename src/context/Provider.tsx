@@ -2,12 +2,12 @@ import { FC, PropsWithChildren, useMemo, useReducer } from "react";
 import Context, { State, GetStateContext } from "./context";
 import reducer from "./reducer";
 import useCallbackRef from "hooks/useCallbackRef";
+import { DEFAULT_PRELOADED_JS } from "./constants";
 
 const initialState: State = {
   runningCases: new Set(),
   collapsedCases: new Set(),
-  preloadedJS:
-    "const nums = new Array(1000).fill(null).map(() => Math.random())",
+  preloadedJS: DEFAULT_PRELOADED_JS,
   preloadedJSError: null,
   testCases: [
     {
