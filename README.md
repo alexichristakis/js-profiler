@@ -44,3 +44,8 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## GitHub Pages
+
+This repository uses a GitHub Actions workflow to build the app and publish the contents of the `build` folder to the `gh-pages` branch. Ensure GitHub Pages is configured to deploy from that branch so that https://alexichristakis.github.io/js-profiler/ serves the latest build.
+
