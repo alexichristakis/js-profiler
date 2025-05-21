@@ -38,8 +38,17 @@ export type EditPreloadedJSAction = {
   preloadedJS: string;
 };
 
+export type ResetPreloadedJSAction = {
+  type: "RESET_PRELOADED_JS";
+};
+
 export type DeleteTestCaseAction = {
   type: "DELETE_CASE";
+  id: string;
+};
+
+export type DuplicateTestCaseAction = {
+  type: "DUPLICATE_CASE";
   id: string;
 };
 
@@ -72,10 +81,12 @@ export type Action =
   | AddTestCaseAction
   | EditTestCaseAction
   | DeleteTestCaseAction
+  | DuplicateTestCaseAction
   | ToggleRunningAction
   | ReceiveResultsAction
   | StopAllAction
   | EditPreloadedJSAction
+  | ResetPreloadedJSAction
   | ReceiveErrorAction
   | ToggleCollapsed;
 

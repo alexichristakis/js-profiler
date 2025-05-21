@@ -4,6 +4,7 @@ import { State } from "./context";
 import { Action, ExecutionError } from "./types";
 import { assertNever } from "utils/typeguards";
 import { toObject, toString } from "utils/cast";
+import { DEFAULT_PRELOADED_JS } from "./constants";
 
 const formatError = (error: unknown): ExecutionError => {
   const { stack, message } = toObject(error);
@@ -54,6 +55,12 @@ const reducer = (state: State, action: Action): State => {
       });
     }
 
+    case "RESET_PRELOADED_JS": {
+      return produce(state, (draft) => {
+        draft.preloadedJS = DEFAULT_PRELOADED_JS;
+      });
+    }
+
     case "ADD_CASE": {
       return produce(state, (draft) => {
         draft.testCases.push({
@@ -88,6 +95,20 @@ const reducer = (state: State, action: Action): State => {
         );
 
         return draft;
+      });
+    }
+
+    case "DUPLICATE_CASE": {
+      const { id } = action;
+      return produce(state, (draft) => {
+        const existing = draft.testCases.find((t) => t.id === id);
+        if (existing) {
+          draft.testCases.push({
+            id: v4(),
+            title: `${existing.title} copy`,
+            code: existing.code,
+          });
+        }
       });
     }
 
