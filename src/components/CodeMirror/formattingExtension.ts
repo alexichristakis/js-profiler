@@ -17,15 +17,16 @@ const formattingExtension = ({ id, languageServer }: Args): Extension => {
 
     void (async () => {
       isFormatting = true;
-      const { changes } = await languageServer.getFormattingChanges(id);
-      if (!changes) {
-        return false;
+      try {
+        const { changes } = await languageServer.getFormattingChanges(id);
+        if (!changes) {
+          return;
+        }
+
+        dispatch({ changes: getCodeMirrorChanges(state, changes) });
+      } finally {
+        isFormatting = false;
       }
-
-      dispatch({ changes: getCodeMirrorChanges(state, changes) });
-      isFormatting = false;
-
-      return true;
     })();
 
     return true;
