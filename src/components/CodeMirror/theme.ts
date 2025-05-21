@@ -83,7 +83,7 @@ const theme = EditorView.theme(
     ".cm-cursor, .cm-dropCursor": {
       borderLeftColor: caret,
     },
-    "&.cm-focused .cm-selectionBackgroundm .cm-selectionBackground, .cm-content ::selection":
+    "&.cm-focused .cm-selectionBackground, .cm-content::selection":
       {
         backgroundColor: selection,
       },
